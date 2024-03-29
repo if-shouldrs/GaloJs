@@ -32,31 +32,36 @@ const GameLayer = cc.Layer.extend({
     },
 
     drawBoard() {
+        // Check if the drawNode already exists, if not create it.
+        if (!this.drawNode) {
+            this.drawNode = new cc.DrawNode();
+            this.addChild(this.drawNode);
+        }
+
+        this.drawNode.clear(); // Clear previous drawings if any
+
         const { width, height } = cc.winSize;
         const boardSize = Math.min(width, height) * BOARD_SIZE_MULTIPLIER;
         const cellSize = boardSize / 3;
         const startX = (width - boardSize) / 2;
         const startY = (height - boardSize) / 2;
-        const lineThickness = LINE_THICKNESS;
 
-        const drawNode = new cc.DrawNode();
         for (let i = 1; i <= 2; i++) {
             // Vertical lines
-            drawNode.drawSegment(
+            this.drawNode.drawSegment(
                 cc.p(startX + i * cellSize, startY),
                 cc.p(startX + i * cellSize, startY + boardSize),
-                lineThickness,
+                LINE_THICKNESS,
                 COLORS.BOARD_LINES
             );
             // Horizontal lines
-            drawNode.drawSegment(
+            this.drawNode.drawSegment(
                 cc.p(startX, startY + i * cellSize),
                 cc.p(startX + boardSize, startY + i * cellSize),
-                lineThickness,
+                LINE_THICKNESS,
                 COLORS.BOARD_LINES
             );
         }
-        this.addChild(drawNode);
     },
 
     drawPiece(row, col, player) {
