@@ -4,18 +4,21 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "transpile": "babel src --out-dir cocos/src --source-maps && babel main.js --out-dir cocos/ --source-maps",
+    "transpile": "del-cli --force cocos/src/ && babel src --out-dir cocos/src --source-maps && babel main.js --out-dir cocos/ --source-maps",
     "win32-build": "npm run transpile && cd cocos && MSBuild build/GaloJs.sln /p:Configuration=Release /p:Platform=\"win32\" && .\\build\\bin\\GaloJs\\Release\\GaloJs.exe",
-    "build": "npm run transpile && cocos.bat run --proj-dir cocos -p web",
+    "build": "npm run transpile && cd cocos && cocos.bat run --proj-dir . -p web",
     "release": "cd cocos && cocos.bat compile -p web -m release",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Wolf",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
     "@babel/preset-env": "^7.24.3"
+  },
+  "dependencies": {
+    "del-cli": "^5.1.0"
   }
 }
