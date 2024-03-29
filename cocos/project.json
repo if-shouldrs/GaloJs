@@ -13,6 +13,8 @@
     "jsList": [
         "src/controller/game.controller.js",
         "src/model/game.js",
+        "src/model/match.js",
+        "src/model/move.js",
         "src/resource.js",
         "src/service/game.service.js",
         "src/utils/constants.js",
