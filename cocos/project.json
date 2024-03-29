@@ -11,5 +11,14 @@
         "cocos2d"
     ],
     "jsList": [
+        "src/controller/game.controller.js",
+        "src/model/game.js",
+        "src/resource.js",
+        "src/service/game.service.js",
+        "src/utils/constants.js",
+        "src/utils/helper.js",
+        "src/view/scene/game.scene.js",
+        "src/view/scene/menu.scene.js",
+        "src/view/scene/scene.manager.js"
     ]
 }
