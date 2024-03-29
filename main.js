@@ -103,9 +103,10 @@ cc.game.onStart = function(){
     // The game will be resized when browser size change
     cc.view.resizeWithBrowserSize(true);
 
+    var gameController = new GameController();
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
-        SceneManager.goToMainMenu();
+        gameController.showMainMenu();
     }, this);
 };
 cc.game.run();

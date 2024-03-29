@@ -1,18 +1,28 @@
-// TODO: Reimplement class, just a general example for now
 class GameController {
     constructor() {
         this.gameModel = new GameModel();
-        this.gameLayer = new GameLayer(this);
-        this.setupGameScene();
+        this.gameService = new GameService();
+        this.mainMenuLayer = new MainMenuLayer(this);
+        this.gameLayer = null;
     }
 
-    setupGameScene() {
+    handlePlayerMove(match, move) {
+    }
+
+    startGame() {
+        // Initialize or reset the game model
+        this.gameModel.setupNewGame();
+
+        // Create and display the game layer/scene
+        this.gameLayer = new GameLayer(this);
         const gameScene = new cc.Scene();
         gameScene.addChild(this.gameLayer);
-    }
-
-    openGameScene() {
         cc.director.runScene(gameScene);
     }
 
+    showMainMenu() {
+        const menuScene = new cc.Scene();
+        menuScene.addChild(this.mainMenuLayer);
+        cc.director.runScene(menuScene);
+    }
 }

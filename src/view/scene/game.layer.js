@@ -21,12 +21,3 @@ const GameLayer = cc.Layer.extend({
     },
 
 });
-
-const GameScene = cc.Scene.extend({
-    controller: null,
-    onEnter() {
-        this._super();
-        const layer = new GameLayer();
-        this.addChild(layer);
-    },
-});

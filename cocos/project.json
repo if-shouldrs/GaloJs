@@ -17,8 +17,7 @@
         "src/service/game.service.js",
         "src/utils/constants.js",
         "src/utils/helper.js",
-        "src/view/scene/game.scene.js",
-        "src/view/scene/menu.scene.js",
-        "src/view/scene/scene.manager.js"
+        "src/view/scene/game.layer.js",
+        "src/view/scene/menu.layer.js"
     ]
 }
