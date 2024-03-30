@@ -2,7 +2,7 @@ class GameController {
     constructor() {
         this.game = new GameModel();
         this.serverService = new ServerService();
-        this.mainMenuLayer = new MainMenuLayer(this.beginGameStart.bind(this));
+        this.mainMenuLayer = new MainMenuLayer(this.startGame.bind(this));
         this.gameLayer = null;
     }
 
@@ -10,7 +10,7 @@ class GameController {
         this.showMainMenu();
     }
 
-    beginMove(move) {
+    makeMove(move) {
         const match = this.game.match;
         // Check if the move is valid
         const isValid = this.game.isValidMove(match, move);
@@ -44,7 +44,7 @@ class GameController {
         }
     }
 
-    beginGameStart() {
+    startGame() {
         const id = this.serverService.createMatch(this.processGameStart.bind(this));
     }
 
@@ -56,8 +56,11 @@ class GameController {
 
         this.game.setupNewGame(id);
 
-        // Create and display the game layer/scene
-        this.gameLayer = new GameLayer(this);
+        // Prepare the game layer
+        this.gameLayer = new GameLayer();
+        this.gameLayer.registerMoveAction(this.makeMove.bind(this));
+        this.gameLayer.drawBoard();
+        // Setup & run the game scene
         const gameScene = new cc.Scene();
         gameScene.addChild(this.gameLayer);
         cc.director.runScene(gameScene);

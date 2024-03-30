@@ -1,19 +1,15 @@
 const { BOARD_SIZE_MULTIPLIER, LINE_THICKNESS, PIECE_FONT_SIZE, COLORS } = GAME_CONSTANTS;
 
 const GameLayer = cc.Layer.extend({
-    controller: null,
     player: 'X',
 
-    ctor(controller) {
+    ctor() {
         this._super();
-        this.controller = controller;
         this.init();
     },
 
     init() {
-        this.registerListener();
         this.setBackgroundColour();
-        this.drawBoard();
     },
 
     setBackgroundColour() {
@@ -69,24 +65,22 @@ const GameLayer = cc.Layer.extend({
         this.addChild(piece, 1);
     },
 
-    registerListener() {
+    registerMoveAction(makeMove) {
         cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
-            onTouchBegan: (touch, event) => {
+            onTouchBegan: (touch, _event) => {
                 const location = touch.getLocation();
-                this.handleTouchLocation(location);
+                // Convert the touch location to board coordinates
+                const { row, col } = this.calculateBoardCoordinates(location);
+                if (row !== null && col !== null) {
+                    // Create a move object and pass it to the controller
+                    const move = { player: this.player, row, col };
+                    makeMove(move);
+                }
                 return true;
             },
         }, this);
-    },
-
-    handleTouchLocation(location) {
-        const { row, col } = this.calculateBoardCoordinates(location);
-        if (row !== null && col !== null) {
-            const move = { player: this.player, row, col };
-            this.controller.beginMove(move);
-        }
     },
 
     calculateBoardCoordinates(location) {
