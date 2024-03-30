@@ -29,8 +29,8 @@ class GameModel {
         }
     }
 
-    setupNewGame(matchId) {
-        this.match = new Match();
+    setupGame(matchId, match = null) {
+        this.match = match ?? new Match();
         this.id = matchId;
     }
 

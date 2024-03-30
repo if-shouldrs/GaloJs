@@ -54,7 +54,7 @@ class GameController {
             return;
         }
 
-        this.game.setupNewGame(id);
+        this.game.setupGame(id);
 
         // Prepare the game layer
         this.gameLayer = new GameLayer();
