@@ -6,7 +6,7 @@ class ServerService {
         this.pollingRequest = null;
     }
 
-    startPollingGameState(matchId) {
+    startPolling(matchId) {
         if (this.pollingRequest === null) {
             this.pollingRequest = setInterval(() => {
                 this.fetchGameState(matchId);
@@ -14,7 +14,7 @@ class ServerService {
         }
     }
 
-    stopPollingGameState() {
+    stopPolling() {
         if (this.pollingRequest !== null) {
             clearInterval(this.pollingRequest);
             this.pollingRequest = null;

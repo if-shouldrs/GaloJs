@@ -13,15 +13,12 @@ class GameController {
         this.gameLayer.updateBoardFromState(game.match.board, game.match.turn);
         if (match.status === 'RUNNING') {
             if (match.turn === game.match.turn) {
-                // Disable polling
-                this.serverService.stopPollingGameState();
+                this.serverService.stopPolling();
             } else {
-                // Re-enable polling
-                this.serverService.startPollingGameState(game.id);
+                this.serverService.startPolling(game.id);
             }
         } else {
-            // Stop polling
-            this.serverService.stopPollingGameState();
+            this.serverService.stopPolling();
 
             if (match.status === 'TIE') {
                 this.gameLayer.showTie();
