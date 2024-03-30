@@ -1,18 +1,21 @@
 const MainMenuLayer = cc.Layer.extend({
     startGame: null,
     joinGame: null,
+    getMatches: null,
 
-    ctor(startGame, joinGame) {
+    ctor(startGame, joinGame, getMatches) {
         this._super();
         this.startGame = startGame;
         this.joinGame = joinGame;
+        this.getMatches = getMatches;
         this.init();
     },
 
     init() {
         const { width, height } = cc.winSize;
         this.createMenu(width, height);
-        this.createMatchList(width, height);
+        // Creates match list after fetching data
+        this.getMatchData(matchData => this.createMatchList(matchData.matches, width, height));
     },
 
     setBackgroundColour() {
@@ -33,7 +36,7 @@ const MainMenuLayer = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    createMatchList(width, height) {
+    createMatchList(matches, width, height) {
         const scrollViewHeight = 200;
         const containerHeight = 60 * 5;
 
@@ -44,28 +47,22 @@ const MainMenuLayer = cc.Layer.extend({
         scrollView.setInnerContainerSize(cc.size(width, containerHeight));
         scrollView.setPosition(0, (height - scrollViewHeight) / 2);
 
-        this.setupMatchButtons(scrollView, width, containerHeight);
+        this.setupMatchButtons(matches, scrollView, width, containerHeight);
 
         this.addChild(scrollView);
     },
 
-    setupMatchButtons(scrollView, width, containerHeight) {
-        const matches = this.getMatchData();
+    setupMatchButtons(matches, scrollView, width, containerHeight) {
         matches.forEach((match, index) => {
-            const button = this.createMatchButton(match, index, width, containerHeight);
+            const matchLabel = "Match " + match.match_id;
+            const button = this.createMatchButton({ name: matchLabel }, index, width, containerHeight);
             scrollView.addChild(button);
-            this.addEventListenersToButton(button, match.id);
+            this.addEventListenersToButton(button, match.match_id);
         });
     },
 
-    getMatchData() {
-        return [
-            { id: 1, name: "Match 1" },
-            { id: 2, name: "Match 2" },
-            { id: 3, name: "Match 3" },
-            { id: 4, name: "Match 4" },
-            { id: 5, name: "Match 5" },
-        ];
+    getMatchData(createMatchList) {
+        return this.getMatches(createMatchList);
     },
 
     createMatchButton(match, index, width, containerHeight) {

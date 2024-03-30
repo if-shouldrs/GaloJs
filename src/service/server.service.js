@@ -34,6 +34,18 @@ class ServerService {
         });
     }
 
+    getMatchList(showMatches) {
+        const url = `${SERVER_URL}/matches`;
+        this.fetchService.fetch(url, {}, (error, data) => {
+            if (error) {
+                console.error('Failed to fetch match list:', error);
+            } else {
+                console.log('Match list:', data);
+                showMatches(data);
+            }
+        });
+    }
+
     createMatch(startGame) {
         const url = `${SERVER_URL}/matches`;
         this.fetchService.fetch(url, { method: 'POST' }, (error, data) => {

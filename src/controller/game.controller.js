@@ -5,6 +5,7 @@ class GameController {
         this.mainMenuLayer = new MainMenuLayer(
             this.startGame.bind(this),
             this.joinGame.bind(this),
+            this.loadMatches.bind(this),
         );
         this.gameLayer = null;
     }
@@ -56,6 +57,10 @@ class GameController {
             this.processGame(id);
             this.processMove(match);
         });
+    }
+
+    loadMatches(showMatches) {
+        this.serverService.getMatchList(showMatches);
     }
 
     processGame(id) {
