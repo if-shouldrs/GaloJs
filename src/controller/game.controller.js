@@ -6,6 +6,10 @@ class GameController {
         this.gameLayer = null;
     }
 
+    load() {
+        this.showMainMenu();
+    }
+
     beginMove(move) {
         const match = this.game.match;
         // Check if the move is valid

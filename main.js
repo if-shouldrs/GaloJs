@@ -27,7 +27,7 @@ cc.game.onStart = function(){
     var gameController = new GameController();
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
-        gameController.showMainMenu();
+        gameController.load();
     }, this);
 };
 
