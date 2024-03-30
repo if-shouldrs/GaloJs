@@ -7,27 +7,6 @@ class GameController {
         this.gameLayer = null;
     }
 
-    processUpdate(match) {
-        const game = this.game;
-        game.updateBoard(match.board, match.turn);
-        this.gameLayer.updateBoardFromState(game.match.board, game.match.turn);
-        if (match.status === 'RUNNING') {
-            if (match.turn === game.match.turn) {
-                this.serverService.stopPolling();
-            } else {
-                this.serverService.startPolling(game.id);
-            }
-        } else {
-            this.serverService.stopPolling();
-
-            if (match.status === 'TIE') {
-                this.gameLayer.showTie();
-            } else {
-                this.gameLayer.showWin(match.status === 'PLAYER1WON' ? 'X' : 'O');
-            }
-        }
-    }
-
     beginMove(move) {
         const match = this.game.match;
         // Check if the move is valid
@@ -42,8 +21,24 @@ class GameController {
             // Server said our move is invalid
             return;
         }
-        // Update the game state & UI
-        this.processUpdate(match);
+
+        this.game.updateBoard(match.board, match.turn);
+        this.gameLayer.updateBoardFromState(this.game.match.board, this.game.match.turn);
+        if (match.status === 'RUNNING') {
+            if (match.turn === this.game.match.turn) {
+                this.serverService.stopPolling();
+            } else {
+                this.serverService.startPolling(this.game.id);
+            }
+        } else {
+            this.serverService.stopPolling();
+
+            if (match.status === 'TIE') {
+                this.gameLayer.showTie();
+            } else {
+                this.gameLayer.showWin(match.status === 'PLAYER1WON' ? 'X' : 'O');
+            }
+        }
     }
 
     beginGameStart() {

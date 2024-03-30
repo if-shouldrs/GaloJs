@@ -25,13 +25,11 @@ class ServerService {
         const url = `${SERVER_URL}/matches/${matchId}`;
         fetch(url)
             .then(response => response.json())
-            .then(match => this.updateGameState(match))
+            .then(match => {
+                console.log('Game State Updated:', match);
+                this.controller.endMove(match);
+            })
             .catch(error => console.error('Failed to fetch game state:', error));
-    }
-
-    updateGameState(match) {
-        this.controller.processUpdate(match);
-        console.log('Game State Updated:', match);
     }
 
     createMatch() {
