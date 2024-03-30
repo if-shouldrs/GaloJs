@@ -1,42 +1,65 @@
 class GameController {
     constructor() {
-        this.gameModel = new GameModel();
+        this.game = new GameModel();
         this.gameService = new GameService();
+        this.serverService = new ServerService(this);
         this.mainMenuLayer = new MainMenuLayer(this);
         this.gameLayer = null;
     }
 
-    makeMove(move) {
-        const match = this.gameModel.match;
-        // Check if the move is valid
-        const isValid = this.gameService.isValidMove(match, move);
-        if (isValid) {
-            const moveApplied = this.gameService.applyMove(match, move);
-
-            if (!moveApplied) {
-                // Server said our move is invalid
-                return;
+    processUpdate(match) {
+        const game = this.game;
+        game.updateBoard(match.board, match.turn);
+        this.gameLayer.updateBoardFromState(game.match.board, game.match.turn);
+        if (match.status === 'RUNNING') {
+            if (match.turn === game.match.turn) {
+                // Disable polling
+                this.serverService.stopPollingGameState();
+            } else {
+                // Re-enable polling
+                this.serverService.startPollingGameState(game.id);
             }
+        } else {
+            // Stop polling
+            this.serverService.stopPollingGameState();
 
-            // Update the game layer to reflect the move
-            this.gameLayer.updateBoard(move.row, move.col, move.player);
-
-            const win = this.gameService.isWin(match, move);
-            const tie = this.gameService.isTie(match.boardState);
-
-            if (win) {
-                this.gameLayer.showWin(move.player);
-            } else if (tie) {
+            if (match.status === 'TIE') {
                 this.gameLayer.showTie();
             } else {
-                // Re-enable polling TODO: Polling should be on only whe it's not the player's turn
+                this.gameLayer.showWin(match.status === 'PLAYER1WON' ? 'X' : 'O');
             }
         }
     }
 
-    startGame() {
-        // Initialize or reset the game model
-        this.gameModel.setupNewGame();
+    beginMove(move) {
+        const match = this.game.match;
+        // Check if the move is valid
+        const isValid = this.gameService.isValidMove(match, move);
+        if (isValid) {
+           this.serverService.sendMove(this.game.id, move);
+        }
+    }
+
+    endMove(match) {
+        if (match === null) {
+            // Server said our move is invalid
+            return;
+        }
+        // Update the game state & UI
+        this.processUpdate(match);
+    }
+
+    beginGameStart() {
+        const id = this.serverService.createMatch();
+    }
+
+    endGameStart(id) {
+        if (isNaN(id)) {
+            console.error('Failed to create match');
+            return;
+        }
+
+        this.game.setupNewGame(id);
 
         // Create and display the game layer/scene
         this.gameLayer = new GameLayer(this);

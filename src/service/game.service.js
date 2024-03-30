@@ -15,7 +15,7 @@ class GameService {
         return false;
     }
 
-    isTie(boardState) {
+    isTie(board) {
         // TODO: Replace this stub with actual implementation
         return false;
     }

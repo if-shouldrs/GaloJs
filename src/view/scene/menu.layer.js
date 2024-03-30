@@ -22,7 +22,7 @@ const MainMenuLayer = cc.Layer.extend({
 
         const startGameLabel = new cc.LabelTTF("Start Game", "Arial", 38);
         startGameLabel.setFontFillColor(cc.color(0, 0, 0));
-        const startGameItem = new cc.MenuItemLabel(startGameLabel, () => this.controller.startGame());
+        const startGameItem = new cc.MenuItemLabel(startGameLabel, () => this.controller.beginGameStart());
 
         const menu = new cc.Menu(startGameItem);
         menu.x = width / 2;

@@ -6,10 +6,10 @@ class ServerService {
         this.pollingRequest = null;
     }
 
-    startPollingGameState() {
+    startPollingGameState(matchId) {
         if (this.pollingRequest === null) {
             this.pollingRequest = setInterval(() => {
-                this.fetchGameState();
+                this.fetchGameState(matchId);
             }, this.pollingInterval);
         }
     }
@@ -21,24 +21,34 @@ class ServerService {
         }
     }
 
-    fetchGameState() {
-        fetch('https://your-api-endpoint.com/gamestate')
+    fetchGameState(matchId) {
+        const url = `${SERVER_URL}/matches/${matchId}`;
+        fetch(url)
             .then(response => response.json())
-            .then(data => this.updateGameState(data))
+            .then(match => this.updateGameState(match))
             .catch(error => console.error('Failed to fetch game state:', error));
     }
 
-    updateGameState(gameState) {
-        // TODO: Convert game state into a match & player move
-        this.controller.makeMove(match, move);
-        console.log('Game State Updated:', gameState);
+    updateGameState(match) {
+        this.controller.processUpdate(match);
+        console.log('Game State Updated:', match);
+    }
+
+    createMatch() {
+        const url = `${SERVER_URL}/matches`;
+        fetch(url, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Match created:', data);
+                this.controller.endGameStart(data.match_id);
+            })
+            .catch(error => console.error('Failed to create match:', error));
     }
 
     sendMove(matchId, move) {
-        // Assume `matchId` identifies the current game/match and `move` is an object representing the move
-        const url = `https://your-api-endpoint.com/matches/${matchId}/move`; // Adjust URL as needed
+        const url = `${SERVER_URL}/matches/${matchId}/move`;
         fetch(url, {
-            method: 'PUT', // or 'POST' if your API expects a POST request for this action
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -48,14 +58,14 @@ class ServerService {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json(); // Return match DTO
+            return response.json();
         })
-        .then(data => {
-            console.log('Move successfully sent', data);
+        .then(match => {
+            console.log('Move successfully sent', match);
+            this.controller.endMove(match);
         })
         .catch(error => {
             console.error('Error sending move:', error);
-            return null;
         });
     }
 

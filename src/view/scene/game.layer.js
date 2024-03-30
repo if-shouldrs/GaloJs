@@ -85,7 +85,7 @@ const GameLayer = cc.Layer.extend({
         const { row, col } = this.calculateBoardCoordinates(location);
         if (row !== null && col !== null) {
             const move = { player: this.player, row, col };
-            this.controller.makeMove(move);
+            this.controller.beginMove(move);
         }
     },
 
@@ -111,11 +111,11 @@ const GameLayer = cc.Layer.extend({
         this.player = this.player === 'X' ? 'O' : 'X'; // TODO: Remove line, here for testing only
     },
 
-    updateBoardFromState(boardState, turn) {
-        this.board = boardState.split(',').map(row => row.split(''));
+    updateBoardFromState(board, turn) {
+        board = board.split(',').map(row => row.split(''));
         board.forEach((row, i) => {
             row.forEach((player, j) => {
-                if (player !== '') {
+                if (player && player !== ' ') {
                     this.drawPiece(i, j, player);
                 }
             });

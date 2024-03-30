@@ -1,6 +1,7 @@
 class GameModel {
     constructor() {
         this.match = new Match();
+        this.id = null;
     }
 
     updateBoard(row, col, player) {
@@ -10,20 +11,27 @@ class GameModel {
         if (player !== this.match.turn) {
             return;
         }
-        if (this.board[row][col] !== '') {
+
+        const board = this.match.board;
+        const position = (row * 4) + col;
+        if (board.charAt(position) !== ' ') {
             return;
         }
-        const position = (row * 4) + col;
-        this.match.boardState = this.match.boardState.substring(0, position) + player + this.match.boardState.substring(position + 1);
+
+        this.match.board = board.substring(0, position) + player + board.substring(position + 1);
         this.match.turn = player === 'X' ? 'O' : 'X';
     }
 
-    updateBoard(boardState) {
-        this.board = boardState.split(',').map(row => row.split(''));
+    updateBoard(board, player = null) {
+        this.match.board = board;
+        if (player !== null) {
+            this.match.turn = player;
+        }
     }
 
-    setupNewGame() {
+    setupNewGame(matchId) {
         this.match = new Match();
+        this.id = matchId;
     }
 
 }
