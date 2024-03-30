@@ -1,3 +1,5 @@
+const { COLORS } = GAME_CONSTANTS;
+
 const MainMenuLayer = cc.Layer.extend({
     startGame: null,
     joinGame: null,
@@ -19,7 +21,7 @@ const MainMenuLayer = cc.Layer.extend({
     },
 
     setBackgroundColour() {
-        const backgroundColor = new cc.LayerColor(cc.color(255, 255, 255, 255));
+        const backgroundColor = new cc.LayerColor(COLORS.BACKGROUND);
         this.addChild(backgroundColor, -1);
     },
 
@@ -27,7 +29,7 @@ const MainMenuLayer = cc.Layer.extend({
         this.setBackgroundColour();
 
         const startGameLabel = new cc.LabelTTF("Start Game", "Arial", 38);
-        startGameLabel.setFontFillColor(cc.color(0, 0, 0));
+        startGameLabel.setFontFillColor(COLORS.TEXT);
         const startGameItem = new cc.MenuItemLabel(startGameLabel, this.startGame);
 
         const menu = new cc.Menu(startGameItem);
@@ -69,7 +71,7 @@ const MainMenuLayer = cc.Layer.extend({
         const buttonHeight = 50;
         const buttonWidth = width * 0.8;
         const buttonY = containerHeight - (index * 60 + 30);
-        const button = new cc.LayerColor(cc.color(0, 255, 0), buttonWidth, buttonHeight);
+        const button = new cc.LayerColor(COLORS.GREEN, buttonWidth, buttonHeight);
         button.setPosition(width / 2 - buttonWidth / 2, buttonY - buttonHeight / 2);
         this.addLabelToButton(button, match.name, buttonWidth, buttonHeight);
         return button;
@@ -77,7 +79,7 @@ const MainMenuLayer = cc.Layer.extend({
 
     addLabelToButton(button, label, width, height) {
         const matchLabel = new cc.LabelTTF(label, "Arial", 24);
-        matchLabel.setFontFillColor(cc.color(0, 0, 0));
+        matchLabel.setFontFillColor(COLORS.TEXT);
         matchLabel.setPosition(width / 2, height / 2);
         button.addChild(matchLabel);
     },
