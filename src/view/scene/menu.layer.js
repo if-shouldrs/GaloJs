@@ -87,32 +87,38 @@ const MainMenuLayer = cc.Layer.extend({
 
     addEventListenersToButton(button, matchId) {
         const threshold = 10;
-        let initialTouchPos = null;
-        let isScrolling = false;
 
         const listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function(touch, event) {
-                initialTouchPos = touch.getLocation();
-                isScrolling = false;
-                return true;
-            },
-            onTouchMoved: function(touch, event) {
-                if (cc.pDistance(initialTouchPos, touch.getLocation()) > threshold) {
-                    isScrolling = true;
-                }
-                return true;
-            },
-            onTouchEnded: function(touch, event) {
-                if (!isScrolling && cc.pDistance(initialTouchPos, touch.getLocation()) < threshold) {
-                    this.joinGame(matchId);
+            onTouchBegan: function(touch, _event) {
+                // Convert touch location to the node (button) space
+                let locationInNode = button.convertToNodeSpace(touch.getLocation());
+                let size = button.getContentSize();
+                let rect = cc.rect(0, 0, size.width, size.height);
+
+                // Check if the touch is within the button bounds
+                if (cc.rectContainsPoint(rect, locationInNode)) {
+                    button.initialTouchPos = touch.getLocation();
+                    button.isScrolling = false;
+                    return true;
                 }
                 return false;
-            }.bind(this)
+            },
+            onTouchMoved: function(touch, _event) {
+                if (button.initialTouchPos && cc.pDistance(button.initialTouchPos, touch.getLocation()) > threshold) {
+                    button.isScrolling = true;
+                }
+            },
+            onTouchEnded: function(touch, _event) {
+                if (!button.isScrolling && button.initialTouchPos && cc.pDistance(button.initialTouchPos, touch.getLocation()) < threshold) {
+                    this.joinGame(matchId);
+                }
+                button.initialTouchPos = null;
+            }.bind(this),
         });
 
         cc.eventManager.addListener(listener, button);
-    },
+    }
 
 });
