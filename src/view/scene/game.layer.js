@@ -2,6 +2,7 @@ const { BOARD_SIZE_MULTIPLIER, LINE_THICKNESS, PIECE_FONT_SIZE, COLORS } = GAME_
 
 const GameLayer = cc.Layer.extend({
     player: 'X',
+    statusLabel: null,
 
     ctor() {
         this._super();
@@ -10,11 +11,21 @@ const GameLayer = cc.Layer.extend({
 
     init() {
         this.setBackgroundColour();
+        this.setupStatusLabel();
     },
 
     setBackgroundColour() {
         const backgroundColor = new cc.LayerColor(COLORS.BACKGROUND);
         this.addChild(backgroundColor, -1);
+    },
+
+    setupStatusLabel() {
+        const { width } = cc.winSize;
+        const positionY = cc.winSize.height * 0.9;
+        this.statusLabel = new cc.LabelTTF("", "Arial", 24);
+        this.statusLabel.setFontFillColor(COLORS.TEXT);
+        this.statusLabel.setPosition(width / 2, positionY);
+        this.addChild(this.statusLabel, 2);
     },
 
     drawBoard() {
@@ -118,13 +129,13 @@ const GameLayer = cc.Layer.extend({
     },
 
     showWin(player) {
+        this.statusLabel.setString(`${player} wins!`);
         cc.log(`${player} wins!`);
-        // TODO: Additional UI logic for win scenario
     },
 
     showTie() {
+        this.statusLabel.setString(`It's a tie!`);
         cc.log(`It's a tie!`);
-        // TODO: Additional UI logic for tie scenario
     },
 
 });

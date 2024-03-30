@@ -7,6 +7,7 @@ const GAME_CONSTANTS = {
         BACKGROUND: cc.color(255, 255, 255, 255),
         BOARD_LINES: cc.color(0, 0, 0, 255),
         PIECE: cc.color(0, 0, 0),
+        TEXT: cc.color(0, 0, 0),
     },
 
 };
