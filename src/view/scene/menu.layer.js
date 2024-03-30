@@ -36,9 +36,9 @@ const MainMenuLayer = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    createMatchList(matches, width, height) {
+    createMatchList(matchIds, width, height) {
         const scrollViewHeight = 200;
-        const containerHeight = 60 * matches.length;
+        const containerHeight = 60 * matchIds.length;
 
         const scrollView = new ccui.ScrollView();
         scrollView.setDirection(ccui.ScrollView.DIR_VERTICAL);
@@ -47,13 +47,13 @@ const MainMenuLayer = cc.Layer.extend({
         scrollView.setInnerContainerSize(cc.size(width, containerHeight));
         scrollView.setPosition(0, (height - scrollViewHeight) / 2);
 
-        this.setupMatchButtons(matches, scrollView, width, containerHeight);
+        this.setupMatchButtons(matchIds, scrollView, width, containerHeight);
 
         this.addChild(scrollView);
     },
 
-    setupMatchButtons(matches, scrollView, width, containerHeight) {
-        matches.forEach((match, index) => {
+    setupMatchButtons(matchIds, scrollView, width, containerHeight) {
+        matchIds.forEach((match, index) => {
             const matchLabel = "Match " + match.match_id;
             const button = this.createMatchButton({ name: matchLabel }, index, width, containerHeight);
             scrollView.addChild(button);
