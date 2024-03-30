@@ -30,7 +30,7 @@ class GameController {
         }
 
         this.game.updateBoard(match.board, match.turn);
-        this.gameLayer.updateBoardFromState(this.game.match.board, this.game.match.turn);
+        this.gameLayer.updateBoardFromState(this.game.match.board);
         if (match.status === 'RUNNING') {
             if (match.turn === this.game.player) {
                 this.serverService.stopPolling();

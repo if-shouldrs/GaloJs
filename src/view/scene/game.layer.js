@@ -115,7 +115,7 @@ const GameLayer = cc.Layer.extend({
         this.drawPiece(row, col, player);
     },
 
-    updateBoardFromState(board, turn) {
+    updateBoardFromState(board) {
         board = board.split(',').map(row => row.split(''));
         board.forEach((row, i) => {
             row.forEach((player, j) => {
