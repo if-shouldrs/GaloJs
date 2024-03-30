@@ -1,9 +1,10 @@
 const MainMenuLayer = cc.Layer.extend({
-    controller: null,
+    startGameCallback: null,
 
-    ctor(controller) {
+    // Adjusted to accept a callback function as an argument
+    ctor(callback) {
         this._super();
-        this.controller = controller;
+        this.startGameCallback = callback; // Store the passed callback function
         this.init();
     },
 
@@ -22,7 +23,7 @@ const MainMenuLayer = cc.Layer.extend({
 
         const startGameLabel = new cc.LabelTTF("Start Game", "Arial", 38);
         startGameLabel.setFontFillColor(cc.color(0, 0, 0));
-        const startGameItem = new cc.MenuItemLabel(startGameLabel, () => this.controller.beginGameStart());
+        const startGameItem = new cc.MenuItemLabel(startGameLabel, this.startGameCallback);
 
         const menu = new cc.Menu(startGameItem);
         menu.x = width / 2;

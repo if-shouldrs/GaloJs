@@ -2,7 +2,7 @@ class GameController {
     constructor() {
         this.game = new GameModel();
         this.serverService = new ServerService(this);
-        this.mainMenuLayer = new MainMenuLayer(this);
+        this.mainMenuLayer = new MainMenuLayer(this.beginGameStart.bind(this));
         this.gameLayer = null;
     }
 
