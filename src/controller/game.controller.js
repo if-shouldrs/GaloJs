@@ -37,6 +37,7 @@ class GameController {
             } else {
                 this.serverService.startPolling(this.game.id);
             }
+            this.gameLayer.updateStatus(`${match.turn}'s turn`);
         } else {
             this.serverService.stopPolling();
 

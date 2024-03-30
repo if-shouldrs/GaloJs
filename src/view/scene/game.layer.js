@@ -126,14 +126,20 @@ const GameLayer = cc.Layer.extend({
         });
     },
 
+    updateStatus(status) {
+        this.statusLabel.setString(status);
+    },
+
     showWin(player) {
-        this.statusLabel.setString(`${player} wins!`);
-        cc.log(`${player} wins!`);
+        const winMsg = `${player} wins!`;
+        this.updateStatus(winMsg);
+        cc.log(winMsg);
     },
 
     showTie() {
-        this.statusLabel.setString(`It's a tie!`);
-        cc.log(`It's a tie!`);
+        const tieMsg = "It's a tie!";
+        this.updateStatus(tieMsg);
+        cc.log(tieMsg);
     },
 
 });
