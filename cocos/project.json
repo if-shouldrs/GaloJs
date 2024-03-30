@@ -16,6 +16,7 @@
         "src/model/match.js",
         "src/model/move.js",
         "src/resource.js",
+        "src/service/fetch.service.js",
         "src/service/server.service.js",
         "src/utils/constants.js",
         "src/utils/helper.js",

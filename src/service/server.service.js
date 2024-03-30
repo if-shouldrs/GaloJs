@@ -2,6 +2,7 @@ class ServerService {
 
     constructor(controller = null, pollingInterval = 5000) {
         this.controller = controller;
+        this.fetchService = new FetchService();
         this.pollingInterval = pollingInterval;
         this.pollingRequest = null;
     }
@@ -23,8 +24,7 @@ class ServerService {
 
     fetchGameState(matchId) {
         const url = `${SERVER_URL}/matches/${matchId}`;
-        fetch(url)
-            .then(response => response.json())
+        this.fetchService.fetch(url)
             .then(match => {
                 console.log('Game State Updated:', match);
                 this.controller.endMove(match);
@@ -34,8 +34,7 @@ class ServerService {
 
     createMatch() {
         const url = `${SERVER_URL}/matches`;
-        fetch(url, { method: 'POST' })
-            .then(response => response.json())
+        this.fetchService.fetch(url, { method: 'POST' })
             .then(data => {
                 console.log('Match created:', data);
                 this.controller.endGameStart(data.match_id);
@@ -45,18 +44,12 @@ class ServerService {
 
     sendMove(matchId, move) {
         const url = `${SERVER_URL}/matches/${matchId}/move`;
-        fetch(url, {
+        this.fetchService.fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(move)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
         })
         .then(match => {
             console.log('Move successfully sent', match);
