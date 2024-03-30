@@ -11,7 +11,7 @@ const GameLayer = cc.Layer.extend({
     },
 
     init() {
-        this.setupTouchHandling();
+        this.registerListener();
         this.setBackgroundColour();
         this.drawBoard();
     },
@@ -69,7 +69,7 @@ const GameLayer = cc.Layer.extend({
         this.addChild(piece, 1);
     },
 
-    setupTouchHandling() {
+    registerListener() {
         cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
