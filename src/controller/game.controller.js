@@ -6,7 +6,8 @@ class GameController {
         this.gameLayer = null;
     }
 
-    makeMove(match, move) {
+    makeMove(move) {
+        const match = this.gameModel.match;
         // Check if the move is valid
         const isValid = this.gameService.isValidMove(match, move);
         if (isValid) {

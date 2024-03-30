@@ -3,7 +3,6 @@ const { BOARD_SIZE_MULTIPLIER, LINE_THICKNESS, PIECE_FONT_SIZE, COLORS } = GAME_
 const GameLayer = cc.Layer.extend({
     controller: null,
     player: 'X',
-    board: [],
 
     ctor(controller) {
         this._super();
@@ -12,7 +11,6 @@ const GameLayer = cc.Layer.extend({
     },
 
     init() {
-        this.initBoard();
         this.setupTouchHandling();
         this.setBackgroundColour();
         this.drawBoard();
@@ -21,14 +19,6 @@ const GameLayer = cc.Layer.extend({
     setBackgroundColour() {
         const backgroundColor = new cc.LayerColor(COLORS.BACKGROUND);
         this.addChild(backgroundColor, -1);
-    },
-
-    initBoard() {
-        this.board = [
-            ['', '', ''],
-            ['', '', ''],
-            ['', '', ''],
-        ];
     },
 
     drawBoard() {
@@ -77,7 +67,6 @@ const GameLayer = cc.Layer.extend({
         piece.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
         piece.setPosition(startX + col * cellSize, startY + (2 - row) * cellSize);
         this.addChild(piece, 1);
-        this.player = this.player === 'X' ? 'O' : 'X'; // TODO: Remove line, here for testing only
     },
 
     setupTouchHandling() {
@@ -95,9 +84,8 @@ const GameLayer = cc.Layer.extend({
     handleTouchLocation(location) {
         const { row, col } = this.calculateBoardCoordinates(location);
         if (row !== null && col !== null) {
-            const match = { boardState: this.board, status: 'in_progress', turn: this.player };
             const move = { player: this.player, row, col };
-            this.controller.makeMove(match, move);
+            this.controller.makeMove(move);
         }
     },
 
@@ -119,8 +107,20 @@ const GameLayer = cc.Layer.extend({
     },
 
     updateBoard(row, col, player) {
-        this.board[row][col] = player;
         this.drawPiece(row, col, player);
+        this.player = this.player === 'X' ? 'O' : 'X'; // TODO: Remove line, here for testing only
+    },
+
+    updateBoardFromState(boardState, turn) {
+        this.board = boardState.split(',').map(row => row.split(''));
+        board.forEach((row, i) => {
+            row.forEach((player, j) => {
+                if (player !== '') {
+                    this.drawPiece(i, j, player);
+                }
+            });
+        });
+        this.player = turn; // TODO: Remove line, here for testing only
     },
 
     showWin(player) {
