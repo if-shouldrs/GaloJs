@@ -34,41 +34,71 @@ const MainMenuLayer = cc.Layer.extend({
     },
 
     createMatchList(width, height) {
-        // ScrollView container size - adjust as needed
         const scrollViewHeight = 200; // Height of the scrollable area
-        const containerHeight = 50 * 5; // Assuming each item is 50px high and we have 5 items for this example
+        const containerHeight = 60 * 5; // Adjusted height for button spacing
 
         const scrollView = new ccui.ScrollView();
         scrollView.setDirection(ccui.ScrollView.DIR_VERTICAL);
         scrollView.setTouchEnabled(true);
         scrollView.setContentSize(cc.size(width, scrollViewHeight));
         scrollView.setInnerContainerSize(cc.size(width, containerHeight));
-        scrollView.x = 0;
-        scrollView.y = height * 0.25 - scrollViewHeight; // Positioning the scroll view
+        scrollView.setPosition(0, (height - scrollViewHeight) / 2);
 
-        const scrollViewYPosition = (height - scrollViewHeight) / 2; // Adjusted for centering
-        scrollView.setPosition(0, scrollViewYPosition);
+        const buttons = []; // To keep track of buttons and their match IDs
 
-        // TODO: Generate this list dynamically
         const matches = [
             { id: 1, name: "Match 1" },
             { id: 2, name: "Match 2" },
             { id: 3, name: "Match 3" },
             { id: 4, name: "Match 4" },
             { id: 5, name: "Match 5" },
-            // Add more matches as needed
         ];
 
         matches.forEach((match, index) => {
-            const matchLabel = new ccui.Text(match.name, "Arial", 24);
-            matchLabel.setColor(cc.color(0, 0, 0));
-            matchLabel.setPosition(width / 2, containerHeight - (index * 50 + 25)); // Adjust positioning as needed
-            scrollView.addChild(matchLabel);
+            const buttonHeight = 50;
+            const buttonWidth = width * 0.8;
+            const buttonY = containerHeight - (index * 60 + 30);
+            const buttonX = width / 2 - buttonWidth / 2;
 
-            // You can also add touch events to each label to handle the join action
+            const button = new cc.LayerColor(cc.color(0, 255, 0), buttonWidth, buttonHeight);
+            button.setPosition(buttonX, buttonY - buttonHeight / 2);
+
+            const matchLabel = new cc.LabelTTF(match.name, "Arial", 24);
+            matchLabel.setFontFillColor(cc.color(0, 0, 0));
+            matchLabel.setPosition(buttonWidth / 2, buttonHeight / 2);
+
+            button.addChild(matchLabel);
+            scrollView.addChild(button);
+
+            // Store button with its match ID for touch detection
+            buttons.push({ button, matchId: match.id });
         });
 
         this.addChild(scrollView);
-    },
+
+        // Add a single touch listener for the entire scrollView
+        cc.eventManager.addListener({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function(_touch, _event) {
+                return true; // to indicate that we want to process the touch
+            },
+            onTouchEnded: (touch, _event) => {
+                const location = touch.getLocation();
+
+                // Check each button for a touch
+                for (let i = 0; i < buttons.length; i++) {
+                    const { button, matchId } = buttons[i];
+                    const buttonWorldPosition = button.getParent().convertToWorldSpace(button.getPosition());
+                    const buttonRect = cc.rect(buttonWorldPosition.x - button.width / 2, buttonWorldPosition.y - button.height / 2, button.width, button.height);
+
+                    if (cc.rectContainsPoint(buttonRect, location)) {
+                        this.joinGame(matchId);
+                        break; // Found the button, no need to check others
+                    }
+                }
+            }, // Ensure 'this' context is preserved
+        }, this);
+    }
 
 });
