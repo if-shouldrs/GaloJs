@@ -18,8 +18,11 @@ class FetchService {
     }
 
     fetch(url, options = {}) {
-        if (window.fetch) {
-            return window.fetch(url, options).then(response => {
+        // Check if fetch is available in the global scope
+        const globalFetch = typeof fetch === 'function' ? fetch : undefined;
+
+        if (globalFetch) {
+            return globalFetch(url, options).then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
