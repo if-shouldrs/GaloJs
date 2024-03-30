@@ -1,7 +1,6 @@
 class GameController {
     constructor() {
         this.game = new GameModel();
-        this.gameService = new GameService();
         this.serverService = new ServerService(this);
         this.mainMenuLayer = new MainMenuLayer(this);
         this.gameLayer = null;
@@ -10,7 +9,7 @@ class GameController {
     beginMove(move) {
         const match = this.game.match;
         // Check if the move is valid
-        const isValid = this.gameService.isValidMove(match, move);
+        const isValid = this.game.isValidMove(match, move);
         if (isValid) {
            this.serverService.sendMove(this.game.id, move);
         }

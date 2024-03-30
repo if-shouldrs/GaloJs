@@ -34,4 +34,9 @@ class GameModel {
         this.id = matchId;
     }
 
+    isValidMove(match, move) {
+        // TODO: Replace this stub with actual implementation
+        return true;
+    }
+
 }
