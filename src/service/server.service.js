@@ -1,6 +1,6 @@
 class ServerService {
 
-    constructor(updateMatch, pollingInterval = 5000) {
+    constructor(updateMatch, pollingInterval = 1000) {
         this.updateMatch = updateMatch;
         this.fetchService = new FetchService();
         this.pollingInterval = pollingInterval;
