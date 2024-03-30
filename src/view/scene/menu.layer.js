@@ -68,37 +68,71 @@ const MainMenuLayer = cc.Layer.extend({
             matchLabel.setPosition(buttonWidth / 2, buttonHeight / 2);
 
             button.addChild(matchLabel);
-            scrollView.addChild(button);
 
+            // Use a closure to capture the match ID and initial touch position
+            (function(matchId){
+                let initialTouchPos = null;
+
+                button.onTouchBegan = function(touch, event) {
+                    initialTouchPos = touch.getLocation();
+                    return true; // to indicate that we want to process the touch
+                };
+
+                button.onTouchEnded = function(touch, event) {
+                    const finalTouchPos = touch.getLocation();
+
+                    // Check if the touch moved more than a threshold amount
+                    if (initialTouchPos && cc.pDistance(initialTouchPos, finalTouchPos) < threshold) {
+                        // The touch did not move much, assume it was a tap
+                        this.joinGame(matchId);
+                    }
+                    initialTouchPos = null; // Reset the initial touch position
+                }.bind(this); // Make sure to bind 'this' to refer to the layer instance
+            }).call(this, match.id); // Immediately invoke the function passing the match ID
+
+            scrollView.addChild(button);
             // Store button with its match ID for touch detection
             buttons.push({ button, matchId: match.id });
         });
 
         this.addChild(scrollView);
 
-        // Add a single touch listener for the entire scrollView
-        cc.eventManager.addListener({
-            event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            swallowTouches: true,
-            onTouchBegan: function(_touch, _event) {
-                return true; // to indicate that we want to process the touch
-            },
-            onTouchEnded: (touch, _event) => {
-                const location = touch.getLocation();
+        // A threshold for how much a touch can move before it's considered a scroll
+        const threshold = 10;
 
-                // Check each button for a touch
-                for (let i = 0; i < buttons.length; i++) {
-                    const { button, matchId } = buttons[i];
-                    const buttonWorldPosition = button.getParent().convertToWorldSpace(button.getPosition());
-                    const buttonRect = cc.rect(buttonWorldPosition.x - button.width / 2, buttonWorldPosition.y - button.height / 2, button.width, button.height);
+        // Make sure to add the touch event listener to each button
+        buttons.forEach(({ button, matchId }) => {
+            let initialTouchPos = null;
+            let isScrolling = false;
 
-                    if (cc.rectContainsPoint(buttonRect, location)) {
-                        this.joinGame(matchId);
-                        break; // Found the button, no need to check others
+            const listener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: false, // Start with false to allow for scrolling
+                onTouchBegan: function(touch, event) {
+                    initialTouchPos = touch.getLocation();
+                    isScrolling = false; // Reset the scrolling flag
+                    return true;
+                },
+                onTouchMoved: function(touch, event) {
+                    // If the user moves their finger, check if it's a scroll
+                    if (cc.pDistance(initialTouchPos, touch.getLocation()) > threshold) {
+                        isScrolling = true;
                     }
-                }
-            }, // Ensure 'this' context is preserved
-        }, this);
-    }
+                    return true;
+                },
+                onTouchEnded: function(touch, event) {
+                    if (!isScrolling) {
+                        // Call the joinGame only if it was not a scroll
+                        this.joinGame(matchId);
+                    }
+                    return false; // Do not swallow the touch, allow for propagation
+                }.bind(this)
+            });
+
+            cc.eventManager.addListener(listener, button);
+        });
+
+
+    },
 
 });
