@@ -1,7 +1,7 @@
 class GameController {
     constructor() {
         this.game = new GameModel();
-        this.serverService = new ServerService(this);
+        this.serverService = new ServerService();
         this.mainMenuLayer = new MainMenuLayer(this.beginGameStart.bind(this));
         this.gameLayer = null;
     }
@@ -15,11 +15,11 @@ class GameController {
         // Check if the move is valid
         const isValid = this.game.isValidMove(match, move);
         if (isValid) {
-           this.serverService.sendMove(this.game.id, move);
+            this.serverService.sendMove(this.game.id, move, this.processMove.bind(this));
         }
     }
 
-    endMove(match) {
+    processMove(match) {
         if (match === null) {
             // Server said our move is invalid
             return;
@@ -45,10 +45,10 @@ class GameController {
     }
 
     beginGameStart() {
-        const id = this.serverService.createMatch();
+        const id = this.serverService.createMatch(this.processGameStart.bind(this));
     }
 
-    endGameStart(id) {
+    processGameStart(id) {
         if (isNaN(id)) {
             console.error('Failed to create match');
             return;

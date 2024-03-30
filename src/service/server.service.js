@@ -1,7 +1,6 @@
 class ServerService {
 
-    constructor(controller = null, pollingInterval = 5000) {
-        this.controller = controller;
+    constructor(pollingInterval = 5000) {
         this.fetchService = new FetchService();
         this.pollingInterval = pollingInterval;
         this.pollingRequest = null;
@@ -34,19 +33,19 @@ class ServerService {
         });
     }
 
-    createMatch() {
+    createMatch(startGame) {
         const url = `${SERVER_URL}/matches`;
         this.fetchService.fetch(url, { method: 'POST' }, (error, data) => {
             if (error) {
                 console.error('Failed to create match:', error);
             } else {
                 console.log('Match created:', data);
-                this.controller.endGameStart(data.match_id);
+                startGame(data.match_id);
             }
         });
     }
 
-    sendMove(matchId, move) {
+    sendMove(matchId, move, processMove) {
         const url = `${SERVER_URL}/matches/${matchId}/move`;
         this.fetchService.fetch(url, {
             method: 'PUT',
@@ -57,9 +56,10 @@ class ServerService {
         }, (error, match) => {
             if (error) {
                 console.error('Error sending move:', error);
+                processMove(null);
             } else {
                 console.log('Move successfully sent', match);
-                this.controller.endMove(match);
+                processMove(match);
             }
         });
     }
