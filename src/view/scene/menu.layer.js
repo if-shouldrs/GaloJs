@@ -38,7 +38,7 @@ const MainMenuLayer = cc.Layer.extend({
 
     createMatchList(matches, width, height) {
         const scrollViewHeight = 200;
-        const containerHeight = 60 * 5;
+        const containerHeight = 60 * matches.length;
 
         const scrollView = new ccui.ScrollView();
         scrollView.setDirection(ccui.ScrollView.DIR_VERTICAL);
