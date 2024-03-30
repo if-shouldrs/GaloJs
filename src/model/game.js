@@ -1,5 +1,6 @@
 class GameModel {
     constructor() {
+        this.player = 'X';
         this.match = new Match();
         this.id = null;
     }
@@ -31,6 +32,7 @@ class GameModel {
 
     setupGame(matchId, match = null) {
         this.match = match ?? new Match();
+        this.player = this.match.turn;
         this.id = matchId;
     }
 

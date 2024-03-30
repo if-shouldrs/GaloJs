@@ -1,11 +1,12 @@
 const { BOARD_SIZE_MULTIPLIER, LINE_THICKNESS, PIECE_FONT_SIZE, COLORS } = GAME_CONSTANTS;
 
 const GameLayer = cc.Layer.extend({
-    player: 'X',
+    player: null,
     statusLabel: null,
 
-    ctor() {
+    ctor(player = 'X') {
         this._super();
+        this.player = player;
         this.init();
     },
 
@@ -29,13 +30,12 @@ const GameLayer = cc.Layer.extend({
     },
 
     drawBoard() {
-        // Check if the drawNode already exists, if not create it.
         if (!this.drawNode) {
             this.drawNode = new cc.DrawNode();
             this.addChild(this.drawNode);
         }
 
-        this.drawNode.clear(); // Clear previous drawings if any
+        this.drawNode.clear();
 
         const { width, height } = cc.winSize;
         const boardSize = Math.min(width, height) * BOARD_SIZE_MULTIPLIER;
@@ -113,7 +113,6 @@ const GameLayer = cc.Layer.extend({
 
     updateBoard(row, col, player) {
         this.drawPiece(row, col, player);
-        this.player = this.player === 'X' ? 'O' : 'X'; // TODO: Remove line, here for testing only
     },
 
     updateBoardFromState(board, turn) {
@@ -125,7 +124,6 @@ const GameLayer = cc.Layer.extend({
                 }
             });
         });
-        this.player = turn; // TODO: Remove line, here for testing only
     },
 
     showWin(player) {

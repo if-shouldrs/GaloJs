@@ -32,7 +32,7 @@ class GameController {
         this.game.updateBoard(match.board, match.turn);
         this.gameLayer.updateBoardFromState(this.game.match.board, this.game.match.turn);
         if (match.status === 'RUNNING') {
-            if (match.turn === this.game.match.turn) {
+            if (match.turn === this.game.player) {
                 this.serverService.stopPolling();
             } else {
                 this.serverService.startPolling(this.game.id);
@@ -54,7 +54,7 @@ class GameController {
 
     joinGame(id) {
         this.serverService.joinMatch(id, match => {
-            this.processGame(id);
+            this.processGame(id, match);
             this.processMove(match);
         });
     }
@@ -63,16 +63,16 @@ class GameController {
         this.serverService.getMatchList(showMatches);
     }
 
-    processGame(id) {
+    processGame(id, match) {
         if (isNaN(id)) {
             console.error('Failed to process match');
             return;
         }
 
-        this.game.setupGame(id);
+        this.game.setupGame(id, match);
 
         // Prepare the game layer
-        this.gameLayer = new GameLayer();
+        this.gameLayer = new GameLayer(this.game.player);
         this.gameLayer.registerMoveAction(this.makeMove.bind(this));
         this.gameLayer.drawBoard();
         // Setup & run the game scene
