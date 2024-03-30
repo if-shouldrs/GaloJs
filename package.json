@@ -11,7 +11,7 @@
     "cmake": "cd cocos/build && cmake .. -A win32",
     "win32-build": "cd cocos/build && MSBuild GaloJs.sln /p:Configuration=Release /p:Platform=\"win32\"",
     "win32-rebuild": "npm run cmake && npm run win32-build",
-    "win32": "npm run full-transpile && npm run win32-build && .\\cocos\\build\\bin\\GaloJs\\Release\\GaloJs.exe",
+    "win32": "npm run full-transpile && npm run win32-rebuild && .\\cocos\\build\\bin\\GaloJs\\Release\\GaloJs.exe",
     "build": "npm run full-transpile && cd cocos && cocos.bat run --proj-dir . -p web",
     "release": "cd cocos && cocos.bat compile -p web -m release",
     "test": "echo \"Error: no test specified\" && exit 1"
