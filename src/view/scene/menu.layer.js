@@ -44,77 +44,85 @@ const MainMenuLayer = cc.Layer.extend({
         scrollView.setInnerContainerSize(cc.size(width, containerHeight));
         scrollView.setPosition(0, (height - scrollViewHeight) / 2);
 
-        const buttons = []; // To keep track of buttons and their match IDs
+        this.setupMatchButtons(scrollView, width, containerHeight);
 
-        const matches = [
+        this.addChild(scrollView);
+    },
+
+    setupMatchButtons(scrollView, width, containerHeight) {
+        const buttons = []; // To keep track of buttons and their match IDs
+        const matches = this.getMatchData();
+
+        const threshold = 10; // A threshold for how much a touch can move before it's considered a scroll
+
+        matches.forEach((match, index) => {
+            const button = this.createMatchButton(match, index, width, containerHeight);
+            this.attachTouchEvents(button, match.id, threshold);
+            scrollView.addChild(button);
+            buttons.push({ button, matchId: match.id });
+        });
+
+        this.addEventListenersToButtons(buttons, threshold);
+    },
+
+    getMatchData() {
+        return [
             { id: 1, name: "Match 1" },
             { id: 2, name: "Match 2" },
             { id: 3, name: "Match 3" },
             { id: 4, name: "Match 4" },
             { id: 5, name: "Match 5" },
         ];
+    },
 
-        matches.forEach((match, index) => {
-            const buttonHeight = 50;
-            const buttonWidth = width * 0.8;
-            const buttonY = containerHeight - (index * 60 + 30);
-            const buttonX = width / 2 - buttonWidth / 2;
+    createMatchButton(match, index, width, containerHeight) {
+        const buttonHeight = 50;
+        const buttonWidth = width * 0.8;
+        const buttonY = containerHeight - (index * 60 + 30);
+        const button = new cc.LayerColor(cc.color(0, 255, 0), buttonWidth, buttonHeight);
+        button.setPosition(width / 2 - buttonWidth / 2, buttonY - buttonHeight / 2);
+        this.addLabelToButton(button, match.name, buttonWidth, buttonHeight);
+        return button;
+    },
 
-            const button = new cc.LayerColor(cc.color(0, 255, 0), buttonWidth, buttonHeight);
-            button.setPosition(buttonX, buttonY - buttonHeight / 2);
+    addLabelToButton(button, label, width, height) {
+        const matchLabel = new cc.LabelTTF(label, "Arial", 24);
+        matchLabel.setFontFillColor(cc.color(0, 0, 0));
+        matchLabel.setPosition(width / 2, height / 2);
+        button.addChild(matchLabel);
+    },
 
-            const matchLabel = new cc.LabelTTF(match.name, "Arial", 24);
-            matchLabel.setFontFillColor(cc.color(0, 0, 0));
-            matchLabel.setPosition(buttonWidth / 2, buttonHeight / 2);
+    attachTouchEvents(button, matchId, threshold) {
+        let initialTouchPos = null;
 
-            button.addChild(matchLabel);
+        button.onTouchBegan = function(touch, event) {
+            initialTouchPos = touch.getLocation();
+            return true; // to indicate that we want to process the touch
+        };
 
-            // Use a closure to capture the match ID and initial touch position
-            (function(matchId){
-                let initialTouchPos = null;
+        button.onTouchEnded = function(touch, event) {
+            const finalTouchPos = touch.getLocation();
+            if (initialTouchPos && cc.pDistance(initialTouchPos, finalTouchPos) < threshold) {
+                this.joinGame(matchId);
+            }
+            initialTouchPos = null;
+        }.bind(this);
+    },
 
-                button.onTouchBegan = function(touch, event) {
-                    initialTouchPos = touch.getLocation();
-                    return true; // to indicate that we want to process the touch
-                };
-
-                button.onTouchEnded = function(touch, event) {
-                    const finalTouchPos = touch.getLocation();
-
-                    // Check if the touch moved more than a threshold amount
-                    if (initialTouchPos && cc.pDistance(initialTouchPos, finalTouchPos) < threshold) {
-                        // The touch did not move much, assume it was a tap
-                        this.joinGame(matchId);
-                    }
-                    initialTouchPos = null; // Reset the initial touch position
-                }.bind(this); // Make sure to bind 'this' to refer to the layer instance
-            }).call(this, match.id); // Immediately invoke the function passing the match ID
-
-            scrollView.addChild(button);
-            // Store button with its match ID for touch detection
-            buttons.push({ button, matchId: match.id });
-        });
-
-        this.addChild(scrollView);
-
-        // A threshold for how much a touch can move before it's considered a scroll
-        const threshold = 10;
-
-        // Make sure to add the touch event listener to each button
+    addEventListenersToButtons(buttons, threshold) {
         buttons.forEach(({ button, matchId }) => {
             let initialTouchPos = null;
             let isScrolling = false;
 
             const listener = cc.EventListener.create({
                 event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: false, // Start with false to allow for scrolling
+                swallowTouches: false,
                 onTouchBegan: function(touch, event) {
                     initialTouchPos = touch.getLocation();
-                    isScrolling = false; // Reset the scrolling flag
+                    isScrolling = false;
                     return true;
                 },
                 onTouchMoved: function(touch, event) {
-                    // If the user moves their finger, check if it's a scroll
                     if (cc.pDistance(initialTouchPos, touch.getLocation()) > threshold) {
                         isScrolling = true;
                     }
@@ -122,16 +130,14 @@ const MainMenuLayer = cc.Layer.extend({
                 },
                 onTouchEnded: function(touch, event) {
                     if (!isScrolling) {
-                        // Call the joinGame only if it was not a scroll
                         this.joinGame(matchId);
                     }
-                    return false; // Do not swallow the touch, allow for propagation
+                    return false;
                 }.bind(this)
             });
 
             cc.eventManager.addListener(listener, button);
         });
-
 
     },
 
