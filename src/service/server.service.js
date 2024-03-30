@@ -1,6 +1,7 @@
 class ServerService {
 
-    constructor(pollingInterval = 5000) {
+    constructor(updateMatch, pollingInterval = 5000) {
+        this.updateMatch = updateMatch;
         this.fetchService = new FetchService();
         this.pollingInterval = pollingInterval;
         this.pollingRequest = null;
@@ -21,14 +22,14 @@ class ServerService {
         }
     }
 
-    fetchGameState(matchId) {
+    fetchGameState(matchId, update = this.updateMatch) {
         const url = `${SERVER_URL}/matches/${matchId}`;
         this.fetchService.fetch(url, {}, (error, match) => {
             if (error) {
                 console.error('Failed to fetch game state:', error);
             } else {
                 console.log('Game State Updated:', match);
-                this.controller.endMove(match);
+                update(match);
             }
         });
     }
@@ -43,6 +44,10 @@ class ServerService {
                 startGame(data.match_id);
             }
         });
+    }
+
+    joinMatch(matchId, joinGame) {
+        this.fetchGameState(matchId, joinGame);
     }
 
     sendMove(matchId, move, processMove) {

@@ -1,7 +1,7 @@
 class GameController {
     constructor() {
         this.game = new GameModel();
-        this.serverService = new ServerService();
+        this.serverService = new ServerService(this.processMove.bind(this));
         this.mainMenuLayer = new MainMenuLayer(this.startGame.bind(this));
         this.gameLayer = null;
     }
@@ -45,12 +45,19 @@ class GameController {
     }
 
     startGame() {
-        const id = this.serverService.createMatch(this.processGameStart.bind(this));
+        this.serverService.createMatch(this.processGame.bind(this));
     }
 
-    processGameStart(id) {
+    joinGame(id) {
+        this.serverService.joinMatch(id, match => {
+            this.processGame(id);
+            this.processMove(match);
+        });
+    }
+
+    processGame(id) {
         if (isNaN(id)) {
-            console.error('Failed to create match');
+            console.error('Failed to process match');
             return;
         }
 
