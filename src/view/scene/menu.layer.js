@@ -34,8 +34,8 @@ const MainMenuLayer = cc.Layer.extend({
     },
 
     createMatchList(width, height) {
-        const scrollViewHeight = 200; // Height of the scrollable area
-        const containerHeight = 60 * 5; // Adjusted height for button spacing
+        const scrollViewHeight = 200;
+        const containerHeight = 60 * 5;
 
         const scrollView = new ccui.ScrollView();
         scrollView.setDirection(ccui.ScrollView.DIR_VERTICAL);
@@ -50,19 +50,12 @@ const MainMenuLayer = cc.Layer.extend({
     },
 
     setupMatchButtons(scrollView, width, containerHeight) {
-        const buttons = []; // To keep track of buttons and their match IDs
         const matches = this.getMatchData();
-
-        const threshold = 10; // A threshold for how much a touch can move before it's considered a scroll
-
         matches.forEach((match, index) => {
             const button = this.createMatchButton(match, index, width, containerHeight);
-            this.attachTouchEvents(button, match.id, threshold);
             scrollView.addChild(button);
-            buttons.push({ button, matchId: match.id });
+            this.addEventListenersToButton(button, match.id);
         });
-
-        this.addEventListenersToButtons(buttons, threshold);
     },
 
     getMatchData() {
@@ -92,53 +85,34 @@ const MainMenuLayer = cc.Layer.extend({
         button.addChild(matchLabel);
     },
 
-    attachTouchEvents(button, matchId, threshold) {
+    addEventListenersToButton(button, matchId) {
+        const threshold = 10;
         let initialTouchPos = null;
+        let isScrolling = false;
 
-        button.onTouchBegan = function(touch, event) {
-            initialTouchPos = touch.getLocation();
-            return true; // to indicate that we want to process the touch
-        };
-
-        button.onTouchEnded = function(touch, event) {
-            const finalTouchPos = touch.getLocation();
-            if (initialTouchPos && cc.pDistance(initialTouchPos, finalTouchPos) < threshold) {
-                this.joinGame(matchId);
-            }
-            initialTouchPos = null;
-        }.bind(this);
-    },
-
-    addEventListenersToButtons(buttons, threshold) {
-        buttons.forEach(({ button, matchId }) => {
-            let initialTouchPos = null;
-            let isScrolling = false;
-
-            const listener = cc.EventListener.create({
-                event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: false,
-                onTouchBegan: function(touch, event) {
-                    initialTouchPos = touch.getLocation();
-                    isScrolling = false;
-                    return true;
-                },
-                onTouchMoved: function(touch, event) {
-                    if (cc.pDistance(initialTouchPos, touch.getLocation()) > threshold) {
-                        isScrolling = true;
-                    }
-                    return true;
-                },
-                onTouchEnded: function(touch, event) {
-                    if (!isScrolling) {
-                        this.joinGame(matchId);
-                    }
-                    return false;
-                }.bind(this)
-            });
-
-            cc.eventManager.addListener(listener, button);
+        const listener = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: false,
+            onTouchBegan: function(touch, event) {
+                initialTouchPos = touch.getLocation();
+                isScrolling = false;
+                return true;
+            },
+            onTouchMoved: function(touch, event) {
+                if (cc.pDistance(initialTouchPos, touch.getLocation()) > threshold) {
+                    isScrolling = true;
+                }
+                return true;
+            },
+            onTouchEnded: function(touch, event) {
+                if (!isScrolling && cc.pDistance(initialTouchPos, touch.getLocation()) < threshold) {
+                    this.joinGame(matchId);
+                }
+                return false;
+            }.bind(this)
         });
 
+        cc.eventManager.addListener(listener, button);
     },
 
 });
