@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "clean": "del-cli --force cocos/src/ && del-cli --force cocos/main.js",
+    "clean-build": "del-cli --force build/*",
     "transpile-only": "babel src --out-dir cocos/src --source-maps && babel main.js --out-dir cocos/ --source-maps",
     "update-project": "node update-project-json.js",
     "transpile": "npm run clean && npm run transpile-only && npm run update-project",
