@@ -13,4 +13,4 @@ const GAME_CONSTANTS = {
 
 };
 
-const SERVER_URL = 'http://localhost:8080';
+const SERVER_URL = cc.game.config.vars.api;

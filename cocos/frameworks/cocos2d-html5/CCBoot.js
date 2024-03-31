@@ -1769,7 +1769,7 @@ var _initSys = function () {
         iOS = true;
         osVersion = uaResult[2] || '';
         osMainVersion = parseInt(osVersion) || 0;
-    } 
+    }
     else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
         iOS = true;
         osVersion = '';
@@ -2342,6 +2342,7 @@ cc.game = /** @lends cc.game# */{
      * @prop {String} frameRate         - Sets the wanted frame rate for your game, but the real fps depends on your game implementation and the running environment.
      * @prop {String} id                - Sets the id of your canvas element on the web page, it's useful only on web.
      * @prop {String} renderMode        - Sets the renderer type, only useful on web, 0: Automatic, 1: Canvas, 2: WebGL
+     * @prop {String} vars              - Custom object with any useful configurations
      * @prop {String} jsList            - Sets the list of js files in your game.
      */
     CONFIG_KEY: {
@@ -2355,6 +2356,7 @@ cc.game = /** @lends cc.game# */{
         frameRate: "frameRate",
         id: "id",
         renderMode: "renderMode",
+        vars: "vars",
         jsList: "jsList"
     },
 
