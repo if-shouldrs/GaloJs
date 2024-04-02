@@ -23,7 +23,7 @@ class ServerService {
     }
 
     fetchGameState(matchId, update = this.updateMatch) {
-        const url = `${SERVER_URL}/matches/${matchId}`;
+        const url = `${this.getServerUrl()}/matches/${matchId}`;
         this.fetchService.fetch(url, {}, (error, match) => {
             if (error) {
                 console.error('Failed to fetch game state:', error);
@@ -35,7 +35,7 @@ class ServerService {
     }
 
     getMatchList(showMatches) {
-        const url = `${SERVER_URL}/matches`;
+        const url = `${this.getServerUrl()}/matches`;
         this.fetchService.fetch(url, {}, (error, data) => {
             if (error) {
                 console.error('Failed to fetch match list:', error);
@@ -47,7 +47,7 @@ class ServerService {
     }
 
     createMatch(startGame) {
-        const url = `${SERVER_URL}/matches`;
+        const url = `${this.getServerUrl()}/matches`;
         this.fetchService.fetch(url, { method: 'POST' }, (error, data) => {
             if (error) {
                 console.error('Failed to create match:', error);
@@ -63,7 +63,7 @@ class ServerService {
     }
 
     sendMove(matchId, move, processMove) {
-        const url = `${SERVER_URL}/matches/${matchId}/move`;
+        const url = `${this.getServerUrl()}/matches/${matchId}/move`;
         this.fetchService.fetch(url, {
             method: 'PUT',
             headers: {
@@ -79,6 +79,10 @@ class ServerService {
                 processMove(match);
             }
         });
+    }
+
+    getServerUrl() {
+        return cc.game.config.vars.api;
     }
 
 }

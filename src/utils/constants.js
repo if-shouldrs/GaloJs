@@ -13,4 +13,3 @@ const GAME_CONSTANTS = {
 
 };
 
-const SERVER_URL = cc.game.config.vars.api;
