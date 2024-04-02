@@ -1,6 +1,6 @@
 
 var res = {
-    // HelloWorld_png : "res/HelloWorld.png",
+    icon_png : "res/favicon.png",
 };
 
 var g_resources = [];
