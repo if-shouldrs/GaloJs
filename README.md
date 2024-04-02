@@ -43,6 +43,23 @@ cd GaloJs
 npm install
 ```
 
+
+## Setting the Server URL
+
+To configure the REST API server URL for GaloJs, you will need to modify the `project.json` file located in the `cocos` directory. Follow these steps:
+
+1. Open the `cocos/project.json` file in your preferred text editor.
+2. Locate the `vars` field within the JSON structure.
+3. Inside the `vars` object, modify the `api` key with the URL of your REST API server. For example:
+
+    ```json
+    "vars": {
+        "api": "http://your-server-url-here.com"
+    }
+    ```
+
+4. Save your changes. The game will now use this URL to communicate with the REST API server.
+
 ## Building and Running
 
 To build and launch GaloJs, use one of the following commands:
