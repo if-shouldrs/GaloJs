@@ -13,7 +13,8 @@
     "win32-build": "npm run transpile && npm run cmake && cd cocos/build && MSBuild GaloJs.sln /p:Configuration=Release /p:Platform=\"win32\"",
     "win32": "npm run win32-build && .\\cocos\\build\\bin\\GaloJs\\Release\\GaloJs.exe",
     "build": "npm run transpile && cd cocos && cocos.bat run --proj-dir . -p web",
-    "release": "cd cocos && cocos.bat compile -p web -m release"
+    "release": "cd cocos && cocos.bat compile -p web -m release",
+    "run-release": "npm run transpile && cd cocos && cocos.bat run --proj-dir . -p web -m release"
   },
   "keywords": [],
   "author": "Wolf",
